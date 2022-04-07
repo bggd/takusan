@@ -35,4 +35,5 @@ margin_bottom = 247.0
 text = "TAKUSAN"
 align = 1
 
+[connection signal="pressed" from="VBoxContainer/Button_PlayGame" to="." method="_on_Button_PlayGame_pressed"]
 [connection signal="pressed" from="VBoxContainer/Button_Quit" to="." method="_on_Button_Quit_pressed"]
