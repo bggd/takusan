@@ -8,7 +8,7 @@ public class game : Godot.Spatial
     private Vector3 _input = new Vector3();
     private EntityPlayer _player;
     private Godot.PackedScene _modelCube;
-    private List<Entity> _entities = new List<Entity>();
+    private List<Entity> _entities;
 
     public void LoadModels()
     {
@@ -26,6 +26,7 @@ public class game : Godot.Spatial
 
     public override void _Ready()
     {
+        _entities = new List<Entity>();
         LoadModels();
         AddPlayer();
     }
