@@ -1,6 +1,5 @@
-using System;
-using System.Numerics;
 using System.Collections.Generic;
+using System.Numerics;
 using Takusan.scene.game;
 
 public class game : Godot.Spatial
