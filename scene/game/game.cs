@@ -4,6 +4,7 @@ using Takusan.scene.game;
 
 public class game : Godot.Spatial
 {
+    private double ElapsedTime;
     private Vector3 _input;
     private EntityPlayer _player;
     private Godot.PackedScene _modelCube;
@@ -23,8 +24,19 @@ public class game : Godot.Spatial
         _entities.Add(_player);
     }
 
+    public void AddEntityCube()
+    {
+        var model = _modelCube.Instance<Godot.Spatial>();
+        var e = new EntityCube();
+        e.Target = _player;
+        e.Model = model;
+        AddChild(e.Model);
+        _entities.Add(e);
+    }
+
     public override void _Ready()
     {
+        ElapsedTime = 0.0;
         _entities = new List<Entity>();
         LoadModels();
         AddPlayer();
@@ -32,8 +44,16 @@ public class game : Godot.Spatial
 
     public override void _PhysicsProcess(float delta)
     {
+        ElapsedTime += delta;
+
         HandleInput();
         _player.Input = _input;
+
+        if (ElapsedTime > 3)
+        {
+            AddEntityCube();
+            ElapsedTime -= 3f;
+        }
 
         foreach (Entity e in _entities)
         {

@@ -9,6 +9,7 @@ namespace Takusan.scene.game
         public Vector3 Acceleration = new Vector3(0f);
         public float MaxSpeed = 6.0f;
         public float MaxForce = 0.25f;
+        public Entity Target = null;
 
         public Godot.Spatial Model { get; set; }
 
@@ -49,7 +50,6 @@ namespace Takusan.scene.game
         {
             Velocity += Acceleration;
             Velocity = Vector3.Clamp(Velocity, new Vector3(-MaxSpeed), new Vector3(MaxSpeed));
-            Position += Velocity;
             Acceleration = Vector3.Zero;
         }
     }
