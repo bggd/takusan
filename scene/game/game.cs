@@ -4,7 +4,7 @@ using Takusan.scene.game;
 
 public class game : Godot.Spatial
 {
-    private Vector3 _input = new Vector3();
+    private Vector3 _input;
     private EntityPlayer _player;
     private Godot.PackedScene _modelCube;
     private List<Entity> _entities;
