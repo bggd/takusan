@@ -27,6 +27,12 @@ namespace Takusan.Scene.Game
             return Vector3.Normalize(v) * len;
         }
 
+        public void SetPosition(Vector3 pos)
+        {
+            Model.Translate(ToGodotVector3(pos - Position));
+            Position = pos;
+        }
+
         public Vector3 Seek(Entity target)
         {
             Vector3 force = target.Position - Position;

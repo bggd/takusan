@@ -25,12 +25,13 @@ public class Game : Godot.Spatial
         _entities.Add(_player);
     }
 
-    public void AddEntityCube()
+    public void AddEntityCube(Vector3 position)
     {
         var model = _modelCube.Instance<Godot.Spatial>();
         var e = new EntityCube();
         e.Target = _player;
         e.Model = model;
+        e.SetPosition(position);
         AddChild(e.Model);
         _entities.Add(e);
     }
@@ -49,10 +50,10 @@ public class Game : Godot.Spatial
     {
         ElapsedTime += delta;
 
-        _wave.Update(delta);
-
         HandleInput();
         _player.Input = _input;
+
+        _wave.Update(delta);
 
         foreach (Entity e in _entities)
         {
