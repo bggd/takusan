@@ -9,7 +9,7 @@ public class Game : Godot.Spatial
     private EntityPlayer _player;
     private Godot.PackedScene _modelCube;
     private List<Entity> _entities;
-    private Trigger _trigger;
+    private Wave _wave;
 
     public void LoadModels()
     {
@@ -41,15 +41,15 @@ public class Game : Godot.Spatial
         _entities = new List<Entity>();
         LoadModels();
         AddPlayer();
-        _trigger = new Trigger();
-        _trigger.Every(3.0, () => { AddEntityCube(); });
+        _wave = new Wave();
+        _wave.Setup(this);
     }
 
     public override void _PhysicsProcess(float delta)
     {
         ElapsedTime += delta;
 
-        _trigger.Update(delta);
+        _wave.Update(delta);
 
         HandleInput();
         _player.Input = _input;
