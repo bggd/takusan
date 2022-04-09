@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class title : Control
+public class Title : Control
 {
     private PackedScene _mainMenu;
 

@@ -1,6 +1,6 @@
 using Godot;
 
-public class menu : Control
+public class Menu : Control
 {
     private PackedScene _game;
 

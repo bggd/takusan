@@ -1,4 +1,4 @@
-namespace Takusan.scene.game
+namespace Takusan.Scene.Game
 {
     internal class EntityCube : Entity
     {

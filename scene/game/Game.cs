@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Numerics;
-using Takusan.scene.game;
+using Takusan.Scene.Game;
 
-public class game : Godot.Spatial
+public class Game : Godot.Spatial
 {
     private double ElapsedTime;
     private Vector3 _input;

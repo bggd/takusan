@@ -1,7 +1,7 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 
-namespace Takusan.scene.game
+namespace Takusan.Scene.Game
 {
     internal class EntityPlayer : Entity
     {
