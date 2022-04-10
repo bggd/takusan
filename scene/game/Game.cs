@@ -4,6 +4,8 @@ using Takusan.Scene.Game;
 
 public class Game : Godot.Spatial
 {
+    public static Game Instance { get; private set; }
+
     private double ElapsedTime;
     private Vector3 _input;
     private EntityPlayer _player;
@@ -25,6 +27,17 @@ public class Game : Godot.Spatial
         _entities.Add(_player);
     }
 
+    public void AddEntityBullet(Vector3 position, Vector3 direction)
+    {
+        var model = _modelCube.Instance<Godot.Spatial>();
+        var e = new EntityBullet();
+        e.Model = model;
+        e.SetPosition(position);
+        e.Direction = direction;
+        AddChild(e.Model);
+        _entities.Add(e);
+    }
+
     public void AddEntityCube(Vector3 position)
     {
         var model = _modelCube.Instance<Godot.Spatial>();
@@ -38,12 +51,17 @@ public class Game : Godot.Spatial
 
     public override void _Ready()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+
         ElapsedTime = 0.0;
         _entities = new List<Entity>();
         LoadModels();
         AddPlayer();
         _wave = new Wave();
-        _wave.Setup(this);
+        _wave.Setup();
     }
 
     public override void _PhysicsProcess(float delta)
@@ -52,6 +70,8 @@ public class Game : Godot.Spatial
 
         HandleInput();
         _player.Input = _input;
+        var mousePos = GetViewport().GetMousePosition();
+        _player.MousePosition = new Vector3(mousePos.x, mousePos.y * -1.0f, 0.0f);
 
         _wave.Update(delta);
 
