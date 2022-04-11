@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Numerics;
-using Takusan.Scene.Game;
 
 public class Game : Godot.Spatial
 {
@@ -11,6 +10,7 @@ public class Game : Godot.Spatial
     private EntityPlayer _player;
     private Godot.PackedScene _modelCube;
     private List<Entity> _entities;
+    private List<Entity> _addEntityQueue;
     private Wave _wave;
 
     public void LoadModels()
@@ -24,7 +24,7 @@ public class Game : Godot.Spatial
         _player = new EntityPlayer();
         _player.Model = model;
         AddChild(_player.Model);
-        _entities.Add(_player);
+        _addEntityQueue.Add(_player);
     }
 
     public void AddEntityBullet(Vector3 position, Vector3 direction)
@@ -35,7 +35,7 @@ public class Game : Godot.Spatial
         e.SetPosition(position);
         e.Direction = direction;
         AddChild(e.Model);
-        _entities.Add(e);
+        _addEntityQueue.Add(e);
     }
 
     public void AddEntityCube(Vector3 position)
@@ -46,7 +46,7 @@ public class Game : Godot.Spatial
         e.Model = model;
         e.SetPosition(position);
         AddChild(e.Model);
-        _entities.Add(e);
+        _addEntityQueue.Add(e);
     }
 
     public override void _Ready()
@@ -58,6 +58,7 @@ public class Game : Godot.Spatial
 
         ElapsedTime = 0.0;
         _entities = new List<Entity>();
+        _addEntityQueue = new List<Entity>();
         LoadModels();
         AddPlayer();
         _wave = new Wave();
@@ -70,15 +71,28 @@ public class Game : Godot.Spatial
 
         HandleInput();
         _player.Input = _input;
-        var mousePos = GetViewport().GetMousePosition();
-        _player.MousePosition = new Vector3(mousePos.x, mousePos.y * -1.0f, 0.0f);
+        var cam = GetNode<Godot.Camera>("Camera");
+        Godot.Vector3 worldPos = cam.ProjectPosition(GetViewport().GetMousePosition(), 0f);
+        _player.MousePosition = new Vector3(worldPos.x, worldPos.y, 0f);
 
         _wave.Update(delta);
+
+        foreach (var e in _addEntityQueue)
+        {
+            _entities.Add(e);
+        }
+        _addEntityQueue.Clear();
 
         foreach (Entity e in _entities)
         {
             e.OnUpdate(delta);
         }
+
+        foreach (var e in _addEntityQueue)
+        {
+            _entities.Add(e);
+        }
+        _addEntityQueue.Clear();
     }
 
     private void HandleInput()

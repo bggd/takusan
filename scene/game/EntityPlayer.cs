@@ -1,28 +1,40 @@
 using System.Numerics;
 
-
-namespace Takusan.Scene.Game
+public class EntityPlayer : Entity
 {
-    internal class EntityPlayer : Entity
+    public Vector3 Input;
+    public Vector3 MousePosition;
+    public Vector3 Speed = new Vector3(4.0f, 4.0f, 0.0f);
+    private Takusan.Scene.Game.Trigger _trigger = new Takusan.Scene.Game.Trigger();
+
+    public EntityPlayer()
     {
-        public Vector3 Input;
-        public Vector3 Speed = new Vector3(4.0f, 4.0f, 0.0f);
-        public override void OnUpdate(float delta)
+        _trigger.CoolDown(0.1, () => { return true; }, () =>
         {
-            Vector3 offset = Vector3.Zero;
-
-            if (Vector3.Abs(Input).X > 0.0f)
-            {
-                offset.X = Speed.X * Input.X * delta;
-            }
-            if (Vector3.Abs(Input).Y > 0.0f)
-            {
-                offset.Y = Speed.Y * Input.Y * delta;
-            }
-
-            Position.X += offset.X;
-            Position.Y += offset.Y;
-            Model.Translate(ToGodotVector3(offset));
+            Vector3 direction = MousePosition - Position;
+            direction = Vector3.Normalize(direction);
+            Game.Instance.AddEntityBullet(Position, direction);
         }
+        );
+    }
+
+    public override void OnUpdate(float delta)
+    {
+        Vector3 offset = Vector3.Zero;
+
+        if (Vector3.Abs(Input).X > 0.0f)
+        {
+            offset.X = Speed.X * Input.X * delta;
+        }
+        if (Vector3.Abs(Input).Y > 0.0f)
+        {
+            offset.Y = Speed.Y * Input.Y * delta;
+        }
+
+        Position.X += offset.X;
+        Position.Y += offset.Y;
+        Model.Translate(ToGodotVector3(offset));
+
+        _trigger.Update(delta);
     }
 }

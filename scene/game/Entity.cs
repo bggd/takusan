@@ -1,62 +1,59 @@
 using System.Numerics;
 
-namespace Takusan.Scene.Game
+public class Entity
 {
-    internal class Entity
+    public Vector3 Position = new Vector3(0f);
+    public Vector3 Velocity = new Vector3(0f);
+    public Vector3 Acceleration = new Vector3(0f);
+    public float MaxSpeed = 6.0f;
+    public float MaxForce = 0.25f;
+    public Entity Target = null;
+
+    public Godot.Spatial Model { get; set; }
+
+    public virtual void OnUpdate(float delta)
     {
-        public Vector3 Position = new Vector3(0f);
-        public Vector3 Velocity = new Vector3(0f);
-        public Vector3 Acceleration = new Vector3(0f);
-        public float MaxSpeed = 6.0f;
-        public float MaxForce = 0.25f;
-        public Entity Target = null;
+    }
 
-        public Godot.Spatial Model { get; set; }
+    public Godot.Vector3 ToGodotVector3(Vector3 v)
+    {
+        return new Godot.Vector3(v.X, v.Y, v.Z);
+    }
 
-        public virtual void OnUpdate(float delta)
-        {
-        }
+    public Vector3 SetMag(Vector3 v, float len)
+    {
+        return Vector3.Normalize(v) * len;
+    }
 
-        public Godot.Vector3 ToGodotVector3(Vector3 v)
-        {
-            return new Godot.Vector3(v.X, v.Y, v.Z);
-        }
+    public void SetPosition(Vector3 pos)
+    {
+        Model.Translate(ToGodotVector3(pos - Position));
+        Position = pos;
+    }
 
-        public Vector3 SetMag(Vector3 v, float len)
-        {
-            return Vector3.Normalize(v) * len;
-        }
+    public Vector3 Seek(Entity target)
+    {
+        Vector3 force = target.Position - Position;
+        force = SetMag(force, MaxSpeed);
+        force = force - Velocity;
+        force = Vector3.Clamp(force, new Vector3(-MaxForce), new Vector3(MaxForce));
+        return force;
+    }
 
-        public void SetPosition(Vector3 pos)
-        {
-            Model.Translate(ToGodotVector3(pos - Position));
-            Position = pos;
-        }
+    public Vector3 Free(Entity target)
+    {
+        return Seek(target) * -1.0f;
+    }
 
-        public Vector3 Seek(Entity target)
-        {
-            Vector3 force = target.Position - Position;
-            force = SetMag(force, MaxSpeed);
-            force = force - Velocity;
-            force = Vector3.Clamp(force, new Vector3(-MaxForce), new Vector3(MaxForce));
-            return force;
-        }
+    public void ApplyForce(Vector3 force)
+    {
+        Acceleration += force;
+    }
 
-        public Vector3 Free(Entity target)
-        {
-            return Seek(target) * -1.0f;
-        }
-
-        public void ApplyForce(Vector3 force)
-        {
-            Acceleration += force;
-        }
-
-        public void UpdateSteeringBehaviour()
-        {
-            Velocity += Acceleration;
-            Velocity = Vector3.Clamp(Velocity, new Vector3(-MaxSpeed), new Vector3(MaxSpeed));
-            Acceleration = Vector3.Zero;
-        }
+    public void UpdateSteeringBehaviour()
+    {
+        Velocity += Acceleration;
+        Velocity = Vector3.Clamp(Velocity, new Vector3(-MaxSpeed), new Vector3(MaxSpeed));
+        Acceleration = Vector3.Zero;
     }
 }
