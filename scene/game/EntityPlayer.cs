@@ -18,6 +18,14 @@ public class EntityPlayer : Entity
         );
     }
 
+    public override void OnCollide(Entity other)
+    {
+        if (other.Type == EntityType.ENEMY)
+        {
+            Godot.GD.Print("collide!");
+        }
+    }
+
     public override void OnUpdate(float delta)
     {
         Vector3 offset = Vector3.Zero;
@@ -31,9 +39,7 @@ public class EntityPlayer : Entity
             offset.Y = Speed.Y * Input.Y * delta;
         }
 
-        Position.X += offset.X;
-        Position.Y += offset.Y;
-        Model.Translate(ToGodotVector3(offset));
+        MoveBy(offset);
 
         _trigger.Update(delta);
     }

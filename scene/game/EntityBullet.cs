@@ -11,7 +11,6 @@ public class EntityBullet : Entity
         var force = Seek(target);
         ApplyForce(force);
         UpdateSteeringBehaviour();
-        Position += Velocity * delta;
-        Model.Translate(ToGodotVector3(Velocity * delta));
+        MoveBy(Velocity * delta);
     }
 }

@@ -13,6 +13,11 @@ public class Game : Godot.Spatial
     private List<Entity> _addEntityQueue;
     private Wave _wave;
 
+    public List<Entity> GetEntities()
+    {
+        return _entities;
+    }
+
     public void LoadModels()
     {
         _modelCube = Godot.ResourceLoader.Load<Godot.PackedScene>("res://scene/model/cube.tscn");
@@ -22,6 +27,8 @@ public class Game : Godot.Spatial
     {
         var model = _modelCube.Instance<Godot.Spatial>();
         _player = new EntityPlayer();
+        _player.Type = EntityType.PlAYER;
+        _player.IsAlive = true;
         _player.Model = model;
         AddChild(_player.Model);
         _addEntityQueue.Add(_player);
@@ -31,8 +38,11 @@ public class Game : Godot.Spatial
     {
         var model = _modelCube.Instance<Godot.Spatial>();
         var e = new EntityBullet();
+        e.Type = EntityType.BULLET;
+        e.IsAlive = true;
         e.Model = model;
         e.SetPosition(position);
+        e.Circle.Radius = 1f;
         e.Direction = direction;
         AddChild(e.Model);
         _addEntityQueue.Add(e);
@@ -42,9 +52,12 @@ public class Game : Godot.Spatial
     {
         var model = _modelCube.Instance<Godot.Spatial>();
         var e = new EntityCube();
+        e.Type = EntityType.ENEMY;
+        e.IsAlive = true;
         e.Target = _player;
         e.Model = model;
         e.SetPosition(position);
+        e.Circle.Radius = 1f;
         AddChild(e.Model);
         _addEntityQueue.Add(e);
     }
@@ -87,6 +100,19 @@ public class Game : Godot.Spatial
         {
             e.OnUpdate(delta);
         }
+
+        _entities.RemoveAll((Entity e) =>
+        {
+            if (e.IsAlive)
+            {
+                return false;
+            }
+            else
+            {
+                e.Model.QueueFree();
+                return true;
+            }
+        });
 
         foreach (var e in _addEntityQueue)
         {

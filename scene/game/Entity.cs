@@ -1,17 +1,32 @@
 using System.Numerics;
 
+public enum EntityType
+{
+    PlAYER,
+    BULLET,
+    ENEMY
+}
+
+
 public class Entity
 {
+    public EntityType Type;
     public Vector3 Position = new Vector3(0f);
     public Vector3 Velocity = new Vector3(0f);
     public Vector3 Acceleration = new Vector3(0f);
     public float MaxSpeed = 6.0f;
     public float MaxForce = 0.25f;
     public Entity Target = null;
+    public Circle Circle = new Circle();
+    public bool IsAlive = false;
 
     public Godot.Spatial Model { get; set; }
 
     public virtual void OnUpdate(float delta)
+    {
+    }
+
+    public virtual void OnCollide(Entity other)
     {
     }
 
@@ -29,6 +44,26 @@ public class Entity
     {
         Model.Translate(ToGodotVector3(pos - Position));
         Position = pos;
+        Circle.Position = pos;
+    }
+
+    public void MoveBy(Vector3 offset)
+    {
+        Circle c = new Circle();
+        c.Position = Position + offset;
+        c.Radius = Circle.Radius;
+        foreach (var e in Game.Instance.GetEntities())
+        {
+            if (e == this) {  continue; }
+
+            if (c.IsHit(e.Circle))
+            {
+                OnCollide(e);
+            }
+        }
+        Position = Position + offset;
+        Circle.Position = Position;
+        Model.Translate(ToGodotVector3(offset));
     }
 
     public Vector3 Seek(Entity target)
